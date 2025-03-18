@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reward System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .profile {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            width: 300px;
+        }
+
+        .button {
+            padding: 5px 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .points {
+            margin-top: 10px;
+        }
+
+        .user-list {
+            margin-top: 20px;
+        }
+
+        .user {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .transfer-input {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>User Profile</h2>
+
+    <!-- User Profile -->
+    <div class="profile" id="userProfile">
+        <h3 id="username">John Doe</h3>
+        <p>Points: <span id="userPoints">0</span></p>
+        <button class="button" id="answerQuestionBtn">Answer a Question</button>
+        <button class="button" id="upvoteAnswerBtn">Upvote Answer</button>
+        
+        <div class="transfer-input" id="transferPointsSection" style="display: none;">
+            <h4>Transfer Points</h4>
+            <label for="transferUser">Enter username to transfer points to:</label>
+            <input type="text" id="transferUser" placeholder="Enter username">
+            <input type="number" id="pointsToTransfer" placeholder="Points to transfer">
+            <button class="button" id="transferPointsBtn">Transfer Points</button>
+        </div>
+
+        <div class="points">
+            <button class="button" id="viewUserListBtn">View Users</button>
+        </div>
+    </div>
+
+    <!-- User List (To search and transfer points) -->
+    <div class="user-list" id="userListSection" style="display: none;">
+        <h3>User List</h3>
+        <div id="userList"></div>
+    </div>
+
+    <script>
+        let userPoints = 0;
+        let users = [
+            { username: "John Doe", points: 0 },
+            { username: "Jane Smith", points: 15 },
+            { username: "Alice Johnson", points: 20 }
+        ];
+
+        // Show user's points
+        function updateUserPoints() {
+            document.getElementById("userPoints").innerText = userPoints;
+        }
+
+        // Handle answering a question
+        document.getElementById("answerQuestionBtn").onclick = function () {
+            userPoints += 5;
+            updateUserPoints();
+        };
+
+        // Handle upvoting an answer
+        document.getElementById("upvoteAnswerBtn").onclick = function () {
+            userPoints += 5;
+            updateUserPoints();
+        };
+
+        // Transfer points to another user
+        document.getElementById("transferPointsBtn").onclick = function () {
+            const transferUsername = document.getElementById("transferUser").value;
+            const points = parseInt(document.getElementById("pointsToTransfer").value);
+
+            if (points <= 0) {
+                alert("Please enter a valid number of points to transfer.");
+                return;
+            }
+
+            if (userPoints >= points && points > 10) {
+                let userToTransfer = users.find(user => user.username === transferUsername);
+                if (userToTransfer) {
+                    userToTransfer.points += points;
+                    userPoints -= points;
+                    alert(`Successfully transferred ${points} points to ${transferUsername}`);
+                    updateUserPoints();
+                    displayUserList();
+                } else {
+                    alert("User not found.");
+                }
+            } else {
+                alert("You cannot transfer points. You need more than 10 points to transfer.");
+            }
+        };
+
+        // View and select user to transfer points
+        document.getElementById("viewUserListBtn").onclick = function () {
+            document.getElementById("userListSection").style.display = 'block';
+            displayUserList();
+            document.getElementById("transferPointsSection").style.display = 'block';
+        };
+
+        function displayUserList() {
+            let userListHtml = '';
+            users.forEach(user => {
+                userListHtml += `
+                    <div class="user">
+                        <span>${user.username} - Points: ${user.points}</span>
+                    </div>
+                `;
+            });
+            document.getElementById("userList").innerHTML = userListHtml;
+        }
+
+        // Initial page load
+        updateUserPoints();
+
+    </script>
+</body>
+</html>
